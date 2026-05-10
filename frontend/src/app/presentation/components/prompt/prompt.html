@@ -1,0 +1,7 @@
+<form [formGroup]="promptForm" (ngSubmit)="onSubmit()">
+    <textarea formControlName="prompt" placeholder="Enter your prompt here..."></textarea>
+    <div class="prompt-options">
+        <talk2db-button [button]="submitButton" type="submit"/>
+    </div>
+</form>
+<p>AI Assistant can make mistakes. Please review its responses.</p>

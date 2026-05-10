@@ -2,13 +2,13 @@
   <button
     [disabled]="button.disabled"
     (click)="button.onClick()"
-    [class]="button.class"    
+    [class]="button.class"
   >
     @if (button.startIcon) {
       <talk2db-icon [icon]="button.startIcon" />
     }
 
-    <span>{{ button.label }}</span>
+    <span>{{ button.label ?? '' }}</span>
 
     @if (button.endIcon) {
       <talk2db-icon [icon]="button.endIcon" />
