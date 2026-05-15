@@ -14,13 +14,13 @@
     "importHelpers": true,
     "target": "ES2022",
     "module": "preserve",
-    "baseUrl": "./src",
     "paths": {
-      "@components/*": ["app/presentation/components/*"],
-      "@pages/*": ["app/presentation/pages/*"],
-      "@infrastructure/*": ["app/infrastructure/*"],
-      "@interfaces/*": ["app/presentation/interfaces/*"],
-      "@constants/*": ["app/presentation/constants/*"]
+      "@components/*": ["./src/app/presentation/components/*"],
+      "@pages/*": ["./src/app/presentation/pages/*"],
+      "@infrastructure/*": ["./src/app/infrastructure/*"],
+      "@interfaces/*": ["./src/app/presentation/interfaces/*"],
+      "@constants/*": ["./src/app/presentation/constants/*"],
+      "@domain/*": ["./src/app/domain/*"]
     }
   },
   "angularCompilerOptions": {
