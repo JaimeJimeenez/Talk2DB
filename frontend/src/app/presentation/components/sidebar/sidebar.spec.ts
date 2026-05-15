@@ -26,28 +26,28 @@ describe('Sidebar', () => {
 
   describe('newChatButton', () => {
     it('should have a newChatButton property defined', () => {
-      expect(component.newChatButton).toBeTruthy();
+      expect(component.newChatButton()).toBeTruthy();
     });
 
     it('should have the correct label from NEW_CHAT_BUTTON constant', () => {
-      expect(component.newChatButton.label).toBe(NEW_CHAT_BUTTON.label);
+      expect(component.newChatButton().label).toBe(NEW_CHAT_BUTTON.label);
     });
 
     it('should have the correct disabled state from NEW_CHAT_BUTTON constant', () => {
-      expect(component.newChatButton.disabled).toBe(NEW_CHAT_BUTTON.disabled);
+      expect(component.newChatButton().disabled).toBe(NEW_CHAT_BUTTON.disabled);
     });
 
     it('should have the correct class from NEW_CHAT_BUTTON constant', () => {
-      expect(component.newChatButton.class).toBe(NEW_CHAT_BUTTON.class);
+      expect(component.newChatButton().class).toBe(NEW_CHAT_BUTTON.class);
     });
 
     it('should have the correct startIcon from NEW_CHAT_BUTTON constant', () => {
-      expect(component.newChatButton.startIcon).toEqual(NEW_CHAT_BUTTON.startIcon);
+      expect(component.newChatButton().startIcon).toEqual(NEW_CHAT_BUTTON.startIcon);
     });
 
     it('should be a separate copy from the constant (not same reference)', () => {
-      expect(component.newChatButton).not.toBe(NEW_CHAT_BUTTON);
-      expect(component.newChatButton).toEqual(NEW_CHAT_BUTTON);
+      expect(component.newChatButton()).not.toBe(NEW_CHAT_BUTTON);
+      expect(component.newChatButton()).toEqual(NEW_CHAT_BUTTON);
     });
   });
 

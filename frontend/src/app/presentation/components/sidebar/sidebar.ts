@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
 
 import { Button } from "@components/button/button";
 
@@ -11,8 +11,8 @@ import { IButton } from '@interfaces/components/button';
   imports: [Button],
   templateUrl: './sidebar.html',
   styleUrl: './sidebar.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Sidebar {
-  public readonly newChatButton: IButton = { ...NEW_CHAT_BUTTON };
-
+  readonly newChatButton = signal<IButton>({ ...NEW_CHAT_BUTTON });
 }

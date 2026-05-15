@@ -33,7 +33,7 @@ describe('Button', () => {
   });
 
   it('should have null button input by default', () => {
-    expect(component.button).toBeNull();
+    expect(component.button()).toBeNull();
   });
 
   it('should not render anything when button is null', () => {

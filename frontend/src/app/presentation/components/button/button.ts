@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 
 import { IButton } from '@interfaces/components/button';
 import { Icon } from "@components/icon/icon";
@@ -8,11 +8,8 @@ import { Icon } from "@components/icon/icon";
   imports: [Icon],
   templateUrl: './button.html',
   styleUrl: './button.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Button {
-  @Input() button: IButton | null = null;
-
-
-
+  readonly button = input<IButton | null>(null);
 }
-
