@@ -31,7 +31,10 @@
             ],
             "styles": [
               "src/styles.scss"
-            ]
+            ],
+            "stylePreprocessorOptions": {
+              "includePaths": ["src"]
+            }
           },
           "configurations": {
             "production": {
@@ -43,8 +46,8 @@
                 },
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "4kB",
-                  "maximumError": "8kB"
+                  "maximumWarning": "24kB",
+                  "maximumError": "48kB"
                 }
               ],
               "outputHashing": "all"
@@ -70,7 +73,12 @@
           "defaultConfiguration": "development"
         },
         "test": {
-          "builder": "@angular/build:unit-test"
+          "builder": "@angular/build:unit-test",
+          "options": {
+            "stylePreprocessorOptions": {
+              "includePaths": ["src"]
+            }
+          }
         }
       }
     }

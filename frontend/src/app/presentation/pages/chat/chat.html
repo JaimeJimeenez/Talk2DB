@@ -1,3 +1,16 @@
-<div class="chat-prompt">
+@if (hasMessages()) {
+  <div class="chat-conversation">
+    <talk2db-conversation/>
+  </div>
+  <div class="chat-prompt">
     <talk2db-prompt/>
-</div>
+  </div>
+} @else {
+  <div class="chat-welcome">
+    <div class="welcome-content">
+      <h2>What can I help you with?</h2>
+      <p>Ask me anything about your database — I'll generate SQL queries for you.</p>
+    </div>
+    <talk2db-prompt/>
+  </div>
+}

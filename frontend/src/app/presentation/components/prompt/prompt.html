@@ -1,7 +1,12 @@
 <form [formGroup]="promptForm" (ngSubmit)="onSubmit()">
-    <textarea formControlName="prompt" placeholder="Enter your prompt here..."></textarea>
+    <textarea
+      formControlName="prompt"
+      placeholder="Ask about your database..."
+      (keydown.enter)="$event.preventDefault(); onSubmit()"
+      [attr.disabled]="isLoading() ? true : null"
+    ></textarea>
     <div class="prompt-options">
-        <talk2db-button [button]="submitButton" type="submit"/>
+        <talk2db-button [button]="submitButton()" type="submit"/>
     </div>
 </form>
 <p>AI Assistant can make mistakes. Please review its responses.</p>

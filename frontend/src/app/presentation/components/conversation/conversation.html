@@ -1,0 +1,17 @@
+<div class="conversation-container" #scrollContainer>
+  @for (message of messages(); track message.id) {
+    @if (message.role === 'user') {
+      <talk2db-question [content]="message.content" />
+    } @else {
+      <talk2db-answer [content]="message.content" [timestamp]="message.timestamp" />
+    }
+  }
+
+  @if (isLoading()) {
+    <div class="loading-indicator">
+      <div class="loading-dot"></div>
+      <div class="loading-dot"></div>
+      <div class="loading-dot"></div>
+    </div>
+  }
+</div>

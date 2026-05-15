@@ -1,29 +1,35 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideLucideIcons, LucideArrowUp, LucideBot } from '@lucide/angular';
 
-import { Chat } from './chat';
+import { Conversation } from './conversation';
 import { ConversationPort } from '@domain/ports/conversation';
 import { MockConversationAdapter } from '@infrastructure/adapters/mock-conversation.adapter';
 
-describe('Chat', () => {
-  let component: Chat;
-  let fixture: ComponentFixture<Chat>;
+describe('Conversation', () => {
+  let component: Conversation;
+  let fixture: ComponentFixture<Conversation>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [Chat],
+      imports: [Conversation],
       providers: [
         { provide: ConversationPort, useClass: MockConversationAdapter },
         provideLucideIcons(LucideArrowUp, LucideBot),
       ],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(Chat);
+    fixture = TestBed.createComponent(Conversation);
     component = fixture.componentInstance;
     await fixture.whenStable();
   });
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  it('should render conversation container', () => {
+    fixture.detectChanges();
+    const container = fixture.nativeElement.querySelector('.conversation-container');
+    expect(container).toBeTruthy();
   });
 });

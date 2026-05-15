@@ -1,0 +1,13 @@
+<div class="answer-wrapper">
+  <div class="answer-avatar">
+    <talk2db-icon [icon]="botIcon" />
+  </div>
+  <div class="answer-bubble">
+    <p class="answer-content">{{ content() }}</p>
+    @if (timestamp()) {
+      <span class="answer-timestamp">
+        {{ timestamp()!.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) }}
+      </span>
+    }
+  </div>
+</div>
