@@ -1,0 +1,21 @@
+<main class="auth-page">
+  <section class="brand">
+    <h1>Talk2DB</h1>
+    <p>SQL Assistant</p>
+  </section>
+
+  <section class="auth-card">
+    <header class="card-header">
+      <h2>{{ title() }}</h2>
+      @if (subtitle()) {
+        <p>{{ subtitle() }}</p>
+      }
+    </header>
+
+    <ng-content select="[auth-card-form]" />
+  </section>
+
+  <footer class="auth-footer">
+    <ng-content select="[auth-card-footer]" />
+  </footer>
+</main>
