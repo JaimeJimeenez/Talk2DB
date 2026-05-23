@@ -1,4 +1,44 @@
 services:
+  postgres:
+    image: postgres:17-alpine
+    container_name: talk2db-postgres
+    environment:
+      POSTGRES_DB: talk2db
+      POSTGRES_USER: talk2db
+      POSTGRES_PASSWORD: talk2db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./backend/schema.sql:/docker-entrypoint-initdb.d/001-schema.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U talk2db -d talk2db"]
+      interval: 3s
+      timeout: 3s
+      retries: 10
+    networks:
+      - talk2db-net
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: docker/Dockerfile
+    container_name: talk2db-backend
+    volumes:
+      - ./backend:/app
+    environment:
+      DATABASE_URL: postgresql+asyncpg://talk2db:talk2db@postgres:5432/talk2db
+      RAG_DATABASE_URL: postgresql+asyncpg://talk2db_reader:talk2db_reader@postgres:5432/talk2db
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      OPENAI_MODEL: ${OPENAI_MODEL:-gpt-5.4-mini}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    ports:
+      - "8000:8000"
+    networks:
+      - talk2db-net
+
   frontend:
     build:
       context: ./frontend
@@ -11,6 +51,9 @@ services:
       - /app/node_modules
     networks:
       - talk2db-net
+
+volumes:
+  postgres-data:
 
 networks:
   talk2db-net:
