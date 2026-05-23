@@ -5,4 +5,5 @@ export interface Conversation {
     readonly title: string;
     readonly messages: Message[];
     readonly createdAt: Date;
+    readonly schema_id: string;
 }

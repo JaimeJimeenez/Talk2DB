@@ -28,5 +28,6 @@ export const NEW_CHAT_BUTTON: IButton = {
   },
   class: "new_chat-button",
   disabled: false,
-  onClick: () => { }
+  onClick: () => { },
+  type: 'button'
 };

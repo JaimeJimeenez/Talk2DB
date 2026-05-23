@@ -20,7 +20,9 @@
       "@infrastructure/*": ["./src/app/infrastructure/*"],
       "@interfaces/*": ["./src/app/presentation/interfaces/*"],
       "@constants/*": ["./src/app/presentation/constants/*"],
-      "@domain/*": ["./src/app/domain/*"]
+      "@services/*": ["./src/app/presentation/services/*"],
+      "@domain/*": ["./src/app/domain/*"],
+      "@environment/*": ["./src/app/environment/*"]
     }
   },
   "angularCompilerOptions": {

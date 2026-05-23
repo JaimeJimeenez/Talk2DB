@@ -7,5 +7,6 @@ export const SUBMIT_PROMPT_BUTTON: IButton = {
     },
     onClick: () => {},
     disabled: false,
-    class: 'submit-button'
+    class: 'submit-button',
+    type: 'submit'
 }

@@ -1,7 +1,8 @@
 @if (button()) {
   <button
-    [disabled]="button()!.disabled"
-    (click)="button()!.onClick()"
+    [disabled]="button()!.disabled ?? false"
+    [type]="button()!.type ?? 'button'"
+    (click)="button()!.onClick?.()"
     [class]="button()!.class ?? ''"
   >
     @if (button()!.startIcon) {

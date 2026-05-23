@@ -75,9 +75,8 @@
         "test": {
           "builder": "@angular/build:unit-test",
           "options": {
-            "stylePreprocessorOptions": {
-              "includePaths": ["src"]
-            }
+            "buildTarget": "frontend:build:development",
+            "tsConfig": "tsconfig.spec.json"
           }
         }
       }
