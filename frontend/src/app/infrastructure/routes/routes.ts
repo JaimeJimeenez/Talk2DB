@@ -22,6 +22,10 @@ export const routes: Routes = [
                 path: 'metrics',
                 loadComponent: () => import("@pages/metrics/metrics").then(component => component.Metrics)
             },
+            {
+                path: 'schema',
+                loadComponent: () => import("@pages/schema/schema").then(component => component.Schema)
+            },
         ]
     },
     {

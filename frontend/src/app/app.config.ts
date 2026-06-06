@@ -22,7 +22,10 @@ import {
   LucideCode2,
   LucideCopy,
   LucideCheck,
-  LucideArrowRight
+  LucideArrowRight,
+  LucideUpload,
+  LucideRefreshCw,
+  LucideFilePlus2
 } from '@lucide/angular';
 
 import { ConversationPort } from '@domain/ports/conversation';
@@ -61,7 +64,10 @@ export const appConfig: ApplicationConfig = {
       LucideCode2,
       LucideCopy,
       LucideCheck,
-      LucideArrowRight
+      LucideArrowRight,
+      LucideUpload,
+      LucideRefreshCw,
+      LucideFilePlus2
     ),
     { provide: ConversationPort, useClass: ConversationAdapter },
     { provide: QuerySchemaPort, useClass: QuerySchemaAdapter },

@@ -67,7 +67,8 @@ export class SidebarService {
         size: 18,
       },
       class: 'sidebar-item-button',
-      disabled: true,
+      disabled: false,
+      onClick: () => this._router.navigate([item.path]),
       type: 'button',
     };
   }

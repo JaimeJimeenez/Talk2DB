@@ -112,5 +112,14 @@ describe('Sidebar', () => {
 
       expect(navigate).toHaveBeenCalledWith(['/conversations', 'conversation-1']);
     });
+
+    it('should navigate to schemas page from the sidebar action', () => {
+      const navigate = vi.spyOn(router, 'navigate').mockResolvedValue(true);
+
+      component.sidebarButtons()[0].onClick?.();
+
+      expect(navigate).toHaveBeenCalledWith(['/schema']);
+      expect(component.sidebarButtons()[0].disabled).toBe(false);
+    });
   });
 });

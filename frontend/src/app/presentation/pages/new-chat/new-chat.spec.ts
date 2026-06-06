@@ -19,8 +19,28 @@ class MockQuerySchemaAdapter extends QuerySchemaPort {
         business_rules: '',
         created_at: '2026-05-23T00:00:00Z',
         refreshed_at: '2026-05-23T00:00:00Z',
+        table_count: 1,
+        column_count: 2,
       },
     ]);
+  }
+
+  getSchemaDetail() {
+    return of({
+      id: 'schema-1',
+      name: 'ventas',
+      description: 'Ventas',
+      business_rules: '',
+      created_at: '2026-05-23T00:00:00Z',
+      refreshed_at: '2026-05-23T00:00:00Z',
+      table_count: 1,
+      column_count: 2,
+      tables: [],
+    });
+  }
+
+  importSchema() {
+    return this.getSchemaDetail();
   }
 }
 

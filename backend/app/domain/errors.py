@@ -14,6 +14,10 @@ class QuerySchemaUnavailableError(ValueError):
     pass
 
 
+class QuerySchemaImportError(ValueError):
+    pass
+
+
 class UserAlreadyExistsError(ValueError):
     pass
 
