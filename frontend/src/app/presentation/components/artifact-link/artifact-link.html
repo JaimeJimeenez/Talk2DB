@@ -1,0 +1,22 @@
+<button type="button" class="artifact-link" (click)="selected.emit(artifact())">
+  <span class="artifact-link-icon">
+    <talk2db-icon [icon]="hasChart() ? chartIcon : tableIcon" />
+  </span>
+  <span class="artifact-link-copy">
+    <strong>{{ artifact().title }}</strong>
+    <small>
+      @if (artifact().columns.length > 0 || artifact().rowCount > 0) {
+        {{ artifact().rowCount }} registros · {{ artifact().columns.length }} columnas
+        @if (hasChart()) {
+          · gráfico
+        }
+        @if (artifact().truncated) {
+          · limitado
+        }
+      } @else {
+        SQL disponible
+      }
+    </small>
+  </span>
+  <talk2db-icon [icon]="arrowIcon" />
+</button>

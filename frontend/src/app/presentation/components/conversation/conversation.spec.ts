@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { provideLucideIcons, LucideArrowUp, LucideBot } from '@lucide/angular';
+import { LucideArrowRight, LucideArrowUp, LucideBot, LucideTable, provideLucideIcons } from '@lucide/angular';
 
 import { Conversation } from './conversation';
 import { ConversationPort } from '@domain/ports/conversation';
@@ -14,7 +14,7 @@ describe('Conversation', () => {
       imports: [Conversation],
       providers: [
         { provide: ConversationPort, useClass: MockConversationAdapter },
-        provideLucideIcons(LucideArrowUp, LucideBot),
+        provideLucideIcons(LucideArrowUp, LucideBot, LucideTable, LucideArrowRight),
       ],
     }).compileComponents();
 

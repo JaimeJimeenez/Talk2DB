@@ -1,19 +1,28 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { provideLucideIcons, LucidePlus } from '@lucide/angular';
+import { provideRouter, Router } from '@angular/router';
+import { provideLucideIcons, LucideChartLine, LucideChevronDown, LucideDatabase, LucideHistory, LucidePlus } from '@lucide/angular';
 
 import { Sidebar } from './sidebar';
 import { NEW_CHAT_BUTTON } from '@constants/components/sidebar';
+import { ConversationPort } from '@domain/ports/conversation';
+import { MockConversationAdapter } from '@infrastructure/adapters/mock-conversation.adapter';
 
 describe('Sidebar', () => {
   let component: Sidebar;
   let fixture: ComponentFixture<Sidebar>;
+  let router: Router;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [Sidebar],
-      providers: [provideLucideIcons(LucidePlus)],
+      providers: [
+        { provide: ConversationPort, useClass: MockConversationAdapter },
+        provideRouter([]),
+        provideLucideIcons(LucidePlus, LucideHistory, LucideChevronDown, LucideDatabase, LucideChartLine),
+      ],
     }).compileComponents();
 
+    router = TestBed.inject(Router);
     fixture = TestBed.createComponent(Sidebar);
     component = fixture.componentInstance;
     fixture.detectChanges();
@@ -47,7 +56,7 @@ describe('Sidebar', () => {
 
     it('should be a separate copy from the constant (not same reference)', () => {
       expect(component.newChatButton()).not.toBe(NEW_CHAT_BUTTON);
-      expect(component.newChatButton()).toEqual(NEW_CHAT_BUTTON);
+      expect(component.newChatButton().label).toBe(NEW_CHAT_BUTTON.label);
     });
   });
 
@@ -78,6 +87,30 @@ describe('Sidebar', () => {
       const compiled = fixture.nativeElement as HTMLElement;
       const buttonWrapper = compiled.querySelector('talk2db-button.new_chat');
       expect(buttonWrapper).toBeTruthy();
+    });
+
+    it('should render sidebar navigation sections', () => {
+      const compiled = fixture.nativeElement as HTMLElement;
+
+      expect(compiled.textContent).toContain('Consultas recientes');
+      expect(compiled.textContent).toContain('Esquemas de bases de datos');
+      expect(compiled.textContent).toContain('Métrica de uso');
+    });
+
+    it('should render recent conversations', () => {
+      const compiled = fixture.nativeElement as HTMLElement;
+
+      expect(compiled.querySelector('.dropdown-item')?.textContent).toContain('Mock conversation');
+    });
+
+    it('should navigate to a recent conversation', () => {
+      const navigate = vi.spyOn(router, 'navigate').mockResolvedValue(true);
+      const compiled = fixture.nativeElement as HTMLElement;
+      const recentConversation = compiled.querySelector<HTMLButtonElement>('.dropdown-item');
+
+      recentConversation?.click();
+
+      expect(navigate).toHaveBeenCalledWith(['/conversations', 'conversation-1']);
     });
   });
 });

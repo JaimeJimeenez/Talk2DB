@@ -1,16 +1,31 @@
 @use 'styles' as *;
 
 :host {
-    display: flex;
-    flex-direction: column;
+    display: block;
     height: 100%;
     width: 100%;
+    overflow: hidden;
+}
+
+.chat-workspace {
+    display: flex;
+    height: 100%;
+    width: 100%;
+    min-height: 0;
+}
+
+.chat-main {
+    display: flex;
+    flex: 1;
+    min-width: 0;
+    flex-direction: column;
 }
 
 // ── Layout: conversation active ─────────────────────────────────────────
 .chat-conversation {
     display: flex;
     flex: 1;
+    min-height: 0;
     width: 100%;
     overflow: hidden;
 }
@@ -19,6 +34,12 @@
     display: flex;
     justify-content: center;
     align-items: center;
+}
+
+@media (max-width: 900px) {
+    .chat-workspace {
+        flex-direction: column;
+    }
 }
 
 // ── Layout: welcome (no messages) ───────────────────────────────────────

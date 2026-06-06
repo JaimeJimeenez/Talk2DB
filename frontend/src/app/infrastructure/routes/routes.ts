@@ -7,12 +7,20 @@ export const routes: Routes = [
         children: [
             {
                 path: '',
-                redirectTo: 'chat',
+                redirectTo: 'new-chat',
                 pathMatch: 'full'
             },
             {
-                path: 'chat',
+                path: 'new-chat',
+                loadComponent: () => import("@pages/new-chat/new-chat").then(component => component.NewChat)
+            },
+            {
+                path: 'conversations/:conversationId',
                 loadComponent: () => import("@pages/chat/chat").then(component => component.Chat)
+            },
+            {
+                path: 'metrics',
+                loadComponent: () => import("@pages/metrics/metrics").then(component => component.Metrics)
             },
         ]
     },

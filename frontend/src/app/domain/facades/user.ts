@@ -21,9 +21,14 @@ export class UserFacade {
         this._isLoading.set(true);
         this._user.signup(username, email, password).subscribe({
             next: (user) => {
+                if (!this._storeToken(user.token)) {
+                    this._isLoading.set(false);
+                    return;
+                }
                 this._isLoading.set(false);
                 this._currentUser.set(user);
                 this._alerts.success('Cuenta creada', 'Tu usuario se ha creado correctamente.');
+                this._router.navigate(['/new-chat']);
             },
             error: () => {
                 this._isLoading.set(false);
@@ -36,16 +41,28 @@ export class UserFacade {
         this._isLoading.set(true);
         this._user.login(email, password).subscribe({
             next: (user) => {
-                globalThis.localStorage?.setItem('talk2db_jwt', user.token);
+                if (!this._storeToken(user.token)) {
+                    this._isLoading.set(false);
+                    return;
+                }
                 this._currentUser.set(user);
                 this._isLoading.set(false);
                 this._alerts.success('Sesión iniciada', 'Bienvenido de nuevo.');
-                this._router.navigate(['/chat']);
+                this._router.navigate(['/new-chat']);
             },
             error: () => {
                 this._isLoading.set(false);
                 this._alerts.error('No se pudo iniciar sesión', 'Revisa tu correo y contraseña.');
             },
         });
+    }
+
+    private _storeToken(token: string): boolean {
+        if (!token) {
+            this._alerts.error('Error de autenticación', 'No se recibió un token válido.');
+            return false;
+        }
+        globalThis.sessionStorage?.setItem('talk2db_jwt', token);
+        return true;
     }
 }

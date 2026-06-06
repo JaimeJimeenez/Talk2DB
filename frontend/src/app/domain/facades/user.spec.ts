@@ -29,7 +29,7 @@ describe('UserFacade', () => {
 
   beforeEach(() => {
     token = null;
-    vi.stubGlobal('localStorage', {
+    vi.stubGlobal('sessionStorage', {
       setItem: vi.fn((_key: string, value: string) => {
         token = value;
       }),
@@ -64,22 +64,24 @@ describe('UserFacade', () => {
     vi.unstubAllGlobals();
   });
 
-  it('signs up users and shows a success alert', () => {
+  it('signs up users, stores token and navigates to new chat', () => {
     facade.signup('demo_user', 'demo@example.com', 'password123');
 
     expect(userPort.signup).toHaveBeenCalledWith('demo_user', 'demo@example.com', 'password123');
+    expect(token).toBe('jwt-token');
     expect(facade.currentUser()).toEqual(user);
     expect(alerts.success).toHaveBeenCalledWith('Cuenta creada', 'Tu usuario se ha creado correctamente.');
+    expect(router.navigate).toHaveBeenCalledWith(['/new-chat']);
   });
 
-  it('logs in users, stores token and navigates to chat', () => {
+  it('logs in users, stores token and navigates to new chat', () => {
     facade.login('demo@example.com', 'password123');
 
     expect(userPort.login).toHaveBeenCalledWith('demo@example.com', 'password123');
     expect(token).toBe('jwt-token');
     expect(facade.currentUser()).toEqual(user);
     expect(alerts.success).toHaveBeenCalledWith('Sesión iniciada', 'Bienvenido de nuevo.');
-    expect(router.navigate).toHaveBeenCalledWith(['/chat']);
+    expect(router.navigate).toHaveBeenCalledWith(['/new-chat']);
   });
 
   it('shows an error alert when login fails', () => {

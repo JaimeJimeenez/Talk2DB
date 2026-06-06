@@ -9,20 +9,8 @@ describe('ApiService', () => {
   let service: ApiService;
   let http: HttpTestingController;
   const baseUrl = `${environment.apiUrl}${environment.apiVersion}`;
-  let token: string | null = null;
 
   beforeEach(() => {
-    token = null;
-    vi.stubGlobal('localStorage', {
-      getItem: vi.fn(() => token),
-      setItem: vi.fn((_key: string, value: string) => {
-        token = value;
-      }),
-      clear: vi.fn(() => {
-        token = null;
-      }),
-    });
-
     TestBed.configureTestingModule({
       providers: [
         ApiService,
@@ -37,7 +25,6 @@ describe('ApiService', () => {
 
   afterEach(() => {
     http.verify();
-    vi.unstubAllGlobals();
   });
 
   it('sends get requests to the configured api url', () => {
@@ -50,15 +37,13 @@ describe('ApiService', () => {
     request.flush([]);
   });
 
-  it('adds bearer token when a jwt is available', () => {
-    token = 'token-123';
-
+  it('sends post requests with the provided body', () => {
     service.post('auth/signup', { username: 'demo' }).subscribe();
 
     const request = http.expectOne(`${baseUrl}/auth/signup`);
 
     expect(request.request.method).toBe('POST');
-    expect(request.request.headers.get('Authorization')).toBe('Bearer token-123');
+    expect(request.request.headers.has('Authorization')).toBe(false);
     expect(request.request.body).toEqual({ username: 'demo' });
     request.flush({});
   });

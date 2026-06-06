@@ -3,4 +3,19 @@
     <h4>Talk2DB</h4>
     <talk2db-button class="new_chat" [button]="newChatButton()" />
   </div>
+
+  <nav class="sidebar-nav" aria-label="Principal">
+    <section class="sidebar-section">
+      <talk2db-dropdown
+        [dropdown]="recentQueriesDropdown()"
+        (selected)="navigateToConversation($event)"
+      />
+    </section>
+
+    <section class="sidebar-section">
+      @for (button of sidebarButtons(); track button.label) {
+        <talk2db-button [button]="button" />
+      }
+    </section>
+  </nav>
 </aside>

@@ -6,6 +6,16 @@
       [attr.disabled]="isLoading() ? true : null"
     ></textarea>
     <div class="prompt-options">
+      @if (submitMode === 'emit') {
+        <talk2db-dropdown
+          class="schema-select"
+          [dropdown]="schemaDropdown()"
+          [selectedId]="selectedSchemaId()"
+          [defaultOpen]="false"
+          [disabled]="!canSelectSchema()"
+          (selected)="selectSchema($event)"
+        />
+      }
         <talk2db-button [button]="submitButton()" type="submit"/>
     </div>
 </form>

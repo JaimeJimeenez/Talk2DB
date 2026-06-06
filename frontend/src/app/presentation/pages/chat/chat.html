@@ -1,16 +1,14 @@
-@if (hasMessages()) {
-  <div class="chat-conversation">
-    <talk2db-conversation/>
-  </div>
-  <div class="chat-prompt">
-    <talk2db-prompt/>
-  </div>
-} @else {
-  <div class="chat-welcome">
-    <div class="welcome-content">
-      <h2>What can I help you with?</h2>
-      <p>Ask me anything about your database — I'll generate SQL queries for you.</p>
+<div class="chat-workspace" [class.has-artifact]="activeArtifact()">
+  <div class="chat-main">
+    <div class="chat-conversation">
+      <talk2db-conversation (artifactSelected)="openArtifact($event)" />
     </div>
-    <talk2db-prompt/>
+    <div class="chat-prompt">
+      <talk2db-prompt/>
+    </div>
   </div>
-}
+
+  @if (activeArtifact()) {
+    <talk2db-artifact [artifact]="activeArtifact()!" (closed)="closeArtifact()" />
+  }
+</div>

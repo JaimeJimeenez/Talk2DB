@@ -7,3 +7,22 @@
     background-color: #FBFBFA;
     border-bottom: var(--border-card);
 }
+
+.header-title h3 {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+    max-width: 100%;
+}
+
+.conversation-title {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.conversation-separator,
+.conversation-title {
+    color: var(--outline);
+}

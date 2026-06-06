@@ -1,0 +1,29 @@
+<div class="table-shell">
+  <table>
+    <thead>
+      <tr>
+        @for (column of artifact().columns; track column.name) {
+          <th>{{ column.name }}</th>
+        }
+      </tr>
+    </thead>
+    <tbody>
+      @for (row of artifact().rows; track $index) {
+        <tr>
+          @for (column of artifact().columns; track column.name) {
+            <td [class.null-value]="row[column.name] === null || row[column.name] === undefined">
+              {{ formatValue(row[column.name]) }}
+            </td>
+          }
+        </tr>
+      }
+    </tbody>
+  </table>
+</div>
+
+<footer class="table-footer">
+  <span>{{ artifact().rowCount }} registros</span>
+  @if (artifact().truncated) {
+    <strong>Resultado limitado a 100 filas</strong>
+  }
+</footer>

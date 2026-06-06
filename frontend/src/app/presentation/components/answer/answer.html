@@ -3,10 +3,16 @@
     <talk2db-icon [icon]="botIcon" />
   </div>
   <div class="answer-bubble">
-    <p class="answer-content">{{ content() }}</p>
-    @if (timestamp()) {
+    <p class="answer-content">{{ message().content }}</p>
+    @if (message().artifact) {
+      <talk2db-artifact-link
+        [artifact]="message().artifact!"
+        (selected)="artifactSelected.emit($event)"
+      />
+    }
+    @if (message().timestamp) {
       <span class="answer-timestamp">
-        {{ timestamp()!.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) }}
+        {{ message().timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) }}
       </span>
     }
   </div>

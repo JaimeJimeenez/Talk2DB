@@ -3,18 +3,18 @@ import { ISidebar } from "@interfaces/components/sidebar";
 
 export const SIDEBAR_ITEMS: ISidebar[] = [
   {
-    icon: "timer",
-    label: "Recent queries",
+    icon: "history",
+    label: "Consultas recientes",
     path: "/history",
   },
   {
     icon: "database",
-    label: "Database schema",
+    label: "Esquemas de bases de datos",
     path: "/schema",
   },
   {
     icon: "chart-line",
-    label: "Usage metrics",
+    label: "Métrica de uso",
     path: "/metrics",
   }
 ];

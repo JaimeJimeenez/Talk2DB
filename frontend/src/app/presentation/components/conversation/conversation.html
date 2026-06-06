@@ -3,7 +3,7 @@
     @if (message.role === 'user') {
       <talk2db-question [content]="message.content" />
     } @else {
-      <talk2db-answer [content]="message.content" [timestamp]="message.timestamp" />
+      <talk2db-answer [message]="message" (artifactSelected)="artifactSelected.emit($event)" />
     }
   }
 

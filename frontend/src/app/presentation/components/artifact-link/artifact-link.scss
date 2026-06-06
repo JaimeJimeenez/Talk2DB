@@ -1,0 +1,61 @@
+@use 'styles' as *;
+
+.artifact-link {
+  display: flex;
+  align-items: center;
+  width: min(100%, 420px);
+  gap: 12px;
+  margin-top: 14px;
+  padding: 12px 14px;
+  border: 1px solid rgba(199, 196, 216, 0.55);
+  border-radius: var(--rounded);
+  background: var(--surface);
+  color: var(--on-surface);
+  cursor: pointer;
+  text-align: left;
+  transition: background-color var(--transition-fast), border-color var(--transition-fast), transform var(--transition-fast);
+
+  &:hover {
+    border-color: rgba(53, 37, 205, 0.45);
+    background: var(--surface-container-low);
+    transform: translateY(-1px);
+
+    .artifact-link-icon {
+      background: var(--primary-fixed-dim);
+    }
+  }
+}
+
+.artifact-link-icon {
+  display: grid;
+  flex: 0 0 40px;
+  width: 40px;
+  height: 40px;
+  place-items: center;
+  border-radius: var(--rounded);
+  background: var(--primary-fixed);
+  color: var(--primary);
+  transition: background-color var(--transition-fast);
+}
+
+.artifact-link-copy {
+  display: grid;
+  min-width: 0;
+  flex: 1;
+  gap: 3px;
+
+  strong {
+    overflow: hidden;
+    color: var(--on-surface);
+    font-size: 0.82rem;
+    font-weight: 800;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  small {
+    color: var(--outline);
+    font-family: var(--font-family-mono);
+    font-size: 0.68rem;
+  }
+}

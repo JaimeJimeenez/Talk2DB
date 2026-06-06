@@ -1,6 +1,9 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { Header } from './header';
+import { ConversationFacade } from '@domain/facades/conversation';
+import { ConversationPort } from '@domain/ports/conversation';
+import { MockConversationAdapter } from '@infrastructure/adapters/mock-conversation.adapter';
 
 describe('Header', () => {
   let component: Header;
@@ -9,6 +12,9 @@ describe('Header', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [Header],
+      providers: [
+        { provide: ConversationPort, useClass: MockConversationAdapter },
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(Header);
@@ -33,7 +39,30 @@ describe('Header', () => {
     const compiled = fixture.nativeElement as HTMLElement;
     const h3 = compiled.querySelector('h3');
     expect(h3).toBeTruthy();
-    expect(h3?.textContent).toBe('SQL Assistant');
+    expect(h3?.textContent?.trim()).toBe('SQL Assistant');
+  });
+
+  it('should display the selected conversation title', () => {
+    const facade = TestBed.inject(ConversationFacade);
+
+    facade.createConversation('schema-1').subscribe();
+    fixture.detectChanges();
+
+    const compiled = fixture.nativeElement as HTMLElement;
+    expect(compiled.querySelector('h3')?.textContent).toContain('SQL Assistant');
+    expect(compiled.querySelector('h3')?.textContent).toContain('>');
+    expect(compiled.querySelector('h3')?.textContent).toContain('Mock conversation');
+  });
+
+  it('should display the selected conversation schema chip', () => {
+    const facade = TestBed.inject(ConversationFacade);
+
+    facade.createConversation('schema-1').subscribe();
+    fixture.detectChanges();
+
+    const compiled = fixture.nativeElement as HTMLElement;
+    const chip = compiled.querySelector('talk2db-chip .chip');
+    expect(chip?.textContent).toBe('ventas');
   });
 
   it('should render the header-title container', () => {

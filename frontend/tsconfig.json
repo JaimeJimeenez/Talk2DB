@@ -20,6 +20,7 @@
       "@infrastructure/*": ["./src/app/infrastructure/*"],
       "@interfaces/*": ["./src/app/presentation/interfaces/*"],
       "@constants/*": ["./src/app/presentation/constants/*"],
+      "@utils/*": ["./src/app/presentation/utils/*"],
       "@services/*": ["./src/app/presentation/services/*"],
       "@domain/*": ["./src/app/domain/*"],
       "@environment/*": ["./src/app/environment/*"]

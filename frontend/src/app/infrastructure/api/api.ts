@@ -1,5 +1,5 @@
 import { inject, Injectable } from "@angular/core";
-import { HttpClient, HttpHeaders } from "@angular/common/http";
+import { HttpClient } from "@angular/common/http";
 
 import { Observable } from "rxjs/internal/Observable";
 
@@ -14,27 +14,22 @@ export class ApiService {
     private _httpClient = inject(HttpClient);
 
     get<T>(url: string, params?: any): Observable<T> {
-        return this._httpClient.get<T>(`${this._apiUrl}/${url}`, { params, headers: this._authHeaders() });
+        return this._httpClient.get<T>(`${this._apiUrl}/${url}`, { params });
     }
 
     post<T>(url: string, body: any): Observable<T> {
-        return this._httpClient.post<T>(`${this._apiUrl}/${url}`, body, { headers: this._authHeaders() });
+        return this._httpClient.post<T>(`${this._apiUrl}/${url}`, body);
     }
 
     patch<T>(url: string, body: any): Observable<T> {
-        return this._httpClient.patch<T>(`${this._apiUrl}/${url}`, body, { headers: this._authHeaders() });
+        return this._httpClient.patch<T>(`${this._apiUrl}/${url}`, body);
     }
 
     put<T>(url: string, body: any): Observable<T> {
-        return this._httpClient.put<T>(`${this._apiUrl}/${url}`, body, { headers: this._authHeaders() });
+        return this._httpClient.put<T>(`${this._apiUrl}/${url}`, body);
     }
 
     delete<T>(url: string): Observable<T> {
-        return this._httpClient.delete<T>(`${this._apiUrl}/${url}`, { headers: this._authHeaders() });
-    }
-
-    private _authHeaders(): HttpHeaders {
-        const token = globalThis.localStorage?.getItem('talk2db_jwt');
-        return token ? new HttpHeaders({ Authorization: `Bearer ${token}` }) : new HttpHeaders();
+        return this._httpClient.delete<T>(`${this._apiUrl}/${url}`);
     }
 }

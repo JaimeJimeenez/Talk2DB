@@ -1,8 +1,10 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
-import { provideLucideIcons, LucidePlus } from '@lucide/angular';
+import { provideLucideIcons, LucideChartLine, LucideChevronDown, LucideDatabase, LucideHistory, LucidePlus } from '@lucide/angular';
 
 import { Main } from './main';
+import { ConversationPort } from '@domain/ports/conversation';
+import { MockConversationAdapter } from '@infrastructure/adapters/mock-conversation.adapter';
 
 describe('Main', () => {
   let component: Main;
@@ -12,8 +14,9 @@ describe('Main', () => {
     await TestBed.configureTestingModule({
       imports: [Main],
       providers: [
+        { provide: ConversationPort, useClass: MockConversationAdapter },
         provideRouter([]),
-        provideLucideIcons(LucidePlus),
+        provideLucideIcons(LucidePlus, LucideHistory, LucideChevronDown, LucideDatabase, LucideChartLine),
       ],
     }).compileComponents();
 

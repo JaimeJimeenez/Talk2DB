@@ -1,0 +1,67 @@
+<aside class="artifact-panel" aria-label="Query result artifact">
+  <header class="artifact-header">
+    <div class="artifact-title-group">
+      <div class="artifact-icon">
+        <talk2db-icon [icon]="tableIcon" />
+      </div>
+      <div>
+        <h2>{{ artifact().title }}</h2>
+        <p>
+          Generado desde
+          <code>{{ artifact().generatedFrom }}</code>
+        </p>
+      </div>
+    </div>
+
+    <div class="artifact-actions">
+      @if (artifact().sql) {
+        <button type="button" class="artifact-action" (click)="copySql()">
+          <talk2db-icon [icon]="copied() ? checkIcon : copyIcon" />
+          <span>{{ copied() ? 'Copiado' : 'SQL' }}</span>
+        </button>
+      }
+      <button type="button" class="artifact-icon-button" (click)="closed.emit()" aria-label="Cerrar artifact">
+        <talk2db-icon [icon]="closeIcon" />
+      </button>
+    </div>
+  </header>
+
+  <nav class="artifact-tabs" aria-label="Artifact views">
+    @if (hasRows()) {
+      <button type="button" [class.active]="activeTab() === 'table'" (click)="activeTab.set('table')">
+        <talk2db-icon [icon]="rowsIcon" />
+        <span>Tabla</span>
+      </button>
+    }
+    @if (hasChart()) {
+      <button type="button" [class.active]="activeTab() === 'chart'" (click)="activeTab.set('chart')">
+        <talk2db-icon [icon]="chartIcon" />
+        <span>Gráfico</span>
+      </button>
+    }
+    @if (artifact().sql) {
+      <button type="button" [class.active]="activeTab() === 'sql'" (click)="activeTab.set('sql')">
+        <talk2db-icon [icon]="codeIcon" />
+        <span>SQL</span>
+      </button>
+    }
+  </nav>
+
+  <section class="artifact-content">
+    @switch (activeTab()) {
+      @case ('table') {
+        @if (hasRows()) {
+          <talk2db-artifact-table [artifact]="artifact()" />
+        } @else if (artifact().sql) {
+          <talk2db-artifact-sql [sql]="artifact().sql ?? ''" />
+        }
+      }
+      @case ('chart') {
+        <talk2db-artifact-chart [artifact]="artifact()" />
+      }
+      @case ('sql') {
+        <talk2db-artifact-sql [sql]="artifact().sql ?? ''" />
+      }
+    }
+  </section>
+</aside>
