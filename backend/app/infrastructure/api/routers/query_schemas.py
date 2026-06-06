@@ -1,50 +1,24 @@
-from fastapi import APIRouter, HTTPException, Request, status
-from dependency_injector import providers
+from dependency_injector.wiring import Provide, inject
+from fastapi import APIRouter, Depends, status
 
-from app.infrastructure.api.routers.dependencies import SessionDep
-from app.infrastructure.api.schemas.query_schema import QuerySchemaResponse, RegisterQuerySchemaRequest
-from app.domain.errors import QuerySchemaNotFoundError, QuerySchemaUnavailableError
+from app.application.use_cases.schemas import SchemasUseCase
+
+from app.core.container import Container
+
+from app.infrastructure.api.schemas.query_schemas import QuerySchemaResponse
+from app.infrastructure.api.security import get_current_user_id
 
 router = APIRouter(prefix="/api/v1/query-schemas", tags=["query-schemas"])
 
 
-@router.post("", response_model=QuerySchemaResponse, status_code=status.HTTP_201_CREATED)
-async def register_schema(
-    payload: RegisterQuerySchemaRequest,
-    request: Request,
-    session: SessionDep,
-) -> QuerySchemaResponse:
-    with request.app.container.session.override(providers.Object(session)):
-        schemas = request.app.container.query_schemas_use_case()
-    try:
-        schema = await schemas.register(payload.name, payload.description, payload.business_rules)
-    except QuerySchemaUnavailableError as error:
-        raise HTTPException(status_code=400, detail=str(error)) from error
-    return QuerySchemaResponse.model_validate(schema, from_attributes=True)
-
-
-@router.get("", response_model=list[QuerySchemaResponse])
-async def list_schemas(request: Request, session: SessionDep) -> list[QuerySchemaResponse]:
-    with request.app.container.session.override(providers.Object(session)):
-        schemas = request.app.container.query_schemas_use_case()
+@router.get("", response_model=list[QuerySchemaResponse], status_code=status.HTTP_200_OK)
+@inject
+async def list_schemas(
+    user_id: str = Depends(get_current_user_id),
+    schemas_use_case: SchemasUseCase = Depends(Provide[Container.schemas_use_case]),
+) -> list[QuerySchemaResponse]:
+    schemas = await schemas_use_case.get_schemas()
     return [
         QuerySchemaResponse.model_validate(schema, from_attributes=True)
-        for schema in await schemas.list()
+        for schema in schemas
     ]
-
-
-@router.post("/{schema_id}/refresh", response_model=QuerySchemaResponse)
-async def refresh_schema(
-    schema_id: str,
-    request: Request,
-    session: SessionDep,
-) -> QuerySchemaResponse:
-    with request.app.container.session.override(providers.Object(session)):
-        schemas = request.app.container.query_schemas_use_case()
-    try:
-        schema = await schemas.refresh(schema_id)
-    except QuerySchemaNotFoundError as error:
-        raise HTTPException(status_code=404, detail="Schema not found") from error
-    except QuerySchemaUnavailableError as error:
-        raise HTTPException(status_code=400, detail=str(error)) from error
-    return QuerySchemaResponse.model_validate(schema, from_attributes=True)

@@ -2,6 +2,10 @@ class ConversationNotFoundError(LookupError):
     pass
 
 
+class ConversationSchemaMismatchError(ValueError):
+    pass
+
+
 class QuerySchemaNotFoundError(LookupError):
     pass
 

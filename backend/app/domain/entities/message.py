@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 from datetime import datetime
 from enum import StrEnum
+from typing import Any
 
 
 class MessageRole(StrEnum):
@@ -16,3 +17,5 @@ class Message:
     timestamp: datetime
     sql: str | None = None
     error: str | None = None
+    artifact: dict[str, Any] | None = None
+    conversation_title: str | None = None

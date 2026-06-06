@@ -1,0 +1,28 @@
+{
+  "cases": [
+    {
+      "id": "ventas_por_mes",
+      "schema_id": "00000000-0000-0000-0000-000000000001",
+      "prompt": "Ventas por mes",
+      "expected_sql": "SELECT DATE_TRUNC('MONTH', p.fecha) AS mes, SUM(lp.cantidad * lp.precio_unitario) AS ingresos FROM ventas.lineas_pedido AS lp JOIN ventas.pedidos AS p ON lp.pedido_id = p.id WHERE p.estado <> 'cancelado' GROUP BY mes ORDER BY mes LIMIT 100"
+    },
+    {
+      "id": "ventas_producto_mas_ingresos",
+      "schema_id": "00000000-0000-0000-0000-000000000001",
+      "prompt": "Que producto ha generado mas ingresos?",
+      "expected_sql": "SELECT pr.nombre AS producto, SUM(lp.cantidad * lp.precio_unitario) AS ingresos FROM ventas.lineas_pedido AS lp JOIN ventas.productos AS pr ON lp.producto_id = pr.id JOIN ventas.pedidos AS p ON lp.pedido_id = p.id WHERE p.estado <> 'cancelado' GROUP BY pr.nombre ORDER BY ingresos DESC LIMIT 1"
+    },
+    {
+      "id": "soporte_minutos_por_canal",
+      "schema_id": "00000000-0000-0000-0000-000000000002",
+      "prompt": "Minutos de soporte por canal",
+      "expected_sql": "SELECT canal, SUM(minutos) AS minutos FROM soporte.interacciones GROUP BY canal ORDER BY minutos DESC LIMIT 100"
+    },
+    {
+      "id": "soporte_tickets_abiertos_por_prioridad",
+      "schema_id": "00000000-0000-0000-0000-000000000002",
+      "prompt": "Tickets abiertos por prioridad",
+      "expected_sql": "SELECT prioridad, COUNT(*) AS tickets FROM soporte.tickets WHERE estado IN ('abierto', 'en_progreso') GROUP BY prioridad ORDER BY tickets DESC LIMIT 100"
+    }
+  ]
+}

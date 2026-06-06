@@ -1,70 +1,55 @@
-from fastapi import APIRouter, HTTPException, Request, status
+from dependency_injector.wiring import Provide, inject
+from fastapi import APIRouter, Depends, HTTPException, status
 
+from app.application.use_cases.conversations import ConversationsUseCase
+from app.core.container import Container
 from app.domain.errors import ConversationNotFoundError, QuerySchemaNotFoundError
-from app.domain.entities.user import User
-from app.infrastructure.api.routers.dependencies import SessionDep
-from app.infrastructure.api.schemas.conversation import ConversationResponse, CreateConversationRequest
-from app.infrastructure.api.schemas.message import MessageResponse, SendMessageRequest
-from app.infrastructure.api.security import requires_authentication
+from app.infrastructure.api.schemas.conversations import (
+    ConversationResponse,
+    ConversationSummaryResponse,
+    CreateConversationRequest,
+)
+from app.infrastructure.api.security import get_current_user_id
 
 router = APIRouter(prefix="/api/v1/conversations", tags=["conversations"])
 
+
 @router.post("", response_model=ConversationResponse, status_code=status.HTTP_201_CREATED)
-@requires_authentication
+@inject
 async def create_conversation(
     payload: CreateConversationRequest,
-    request: Request,
-    session: SessionDep,
+    user_id: str = Depends(get_current_user_id),
+    conversations_use_case: ConversationsUseCase = Depends(Provide[Container.conversations_use_case]),
 ) -> ConversationResponse:
-    current_user: User = request.state.current_user
-    conversations = request.app.container.conversations_use_case()
     try:
-        conversation = await conversations.create_conversation(payload.schema_id, current_user.id)
+        conversation = await conversations_use_case.create_conversation(payload.schema_id, user_id)
     except QuerySchemaNotFoundError as error:
-        raise HTTPException(status_code=404, detail="Schema not found") from error
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Schema not found") from error
     return ConversationResponse.model_validate(conversation, from_attributes=True)
 
 
-@router.get("", response_model=list[ConversationResponse])
-@requires_authentication
+@router.get("", response_model=list[ConversationSummaryResponse], status_code=status.HTTP_200_OK)
+@inject
 async def list_conversations(
-    request: Request,
-    session: SessionDep,
-) -> list[ConversationResponse]:
-    current_user: User = request.state.current_user
-    conversations = request.app.container.conversations_use_case()
-    items = await conversations.list_conversations(current_user.id)
-    return [ConversationResponse.model_validate(item, from_attributes=True) for item in items]
+    user_id: str = Depends(get_current_user_id),
+    conversations_use_case: ConversationsUseCase = Depends(Provide[Container.conversations_use_case]),
+) -> list[ConversationSummaryResponse]:
+    conversations = await conversations_use_case.list_conversations(user_id)
+    return [
+        ConversationSummaryResponse.model_validate(conversation, from_attributes=True)
+        for conversation in conversations
+    ]
 
 
-@router.get("/{conversation_id}", response_model=ConversationResponse)
-@requires_authentication
+@router.get("/{conversation_id}", response_model=ConversationResponse, status_code=status.HTTP_200_OK)
+@inject
 async def get_conversation(
     conversation_id: str,
-    request: Request,
-    session: SessionDep,
+    user_id: str = Depends(get_current_user_id),
+    conversations_use_case: ConversationsUseCase = Depends(Provide[Container.conversations_use_case]),
 ) -> ConversationResponse:
-    current_user: User = request.state.current_user
-    conversations = request.app.container.conversations_use_case()
     try:
-        conversation = await conversations.get_conversation(conversation_id, current_user.id)
+        conversation = await conversations_use_case.get_conversation(conversation_id, user_id)
     except ConversationNotFoundError as error:
-        raise HTTPException(status_code=404, detail="Conversation not found") from error
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Conversation not found") from error
     return ConversationResponse.model_validate(conversation, from_attributes=True)
-
-
-@router.post("/{conversation_id}/messages", response_model=MessageResponse)
-@requires_authentication
-async def send_message(
-    conversation_id: str,
-    payload: SendMessageRequest,
-    request: Request,
-    session: SessionDep,
-) -> MessageResponse:
-    current_user: User = request.state.current_user
-    messages = request.app.container.messages_use_case()
-    try:
-        message = await messages.save_message(conversation_id, payload.content, current_user.id)
-    except ConversationNotFoundError as error:
-        raise HTTPException(status_code=404, detail="Conversation not found") from error
-    return MessageResponse.model_validate(message, from_attributes=True)

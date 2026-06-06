@@ -2,7 +2,8 @@ from abc import ABC, abstractmethod
 
 from app.domain.entities.conversation import Conversation
 
-class ConversationsRepository(ABC):
+class ConversationsPort(ABC):
+
     @abstractmethod
     async def save(self, conversation: Conversation) -> Conversation:
         raise NotImplementedError

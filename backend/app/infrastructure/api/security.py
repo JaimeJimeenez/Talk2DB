@@ -1,93 +1,50 @@
-from collections.abc import Awaitable, Callable
-from functools import wraps
-from typing import Any
-
+from fastapi import Depends, HTTPException, status
+from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 import jwt
-from dependency_injector import providers
-from fastapi import HTTPException, Request, status
+from jwt import ExpiredSignatureError, InvalidAudienceError, InvalidIssuerError, PyJWTError
 
-from app.core.settings import Settings
-from app.domain.entities.user import User
-from app.domain.ports.users import UsersRepository
+from app.core.settings import get_settings
+
+bearer_scheme = HTTPBearer(auto_error=False)
 
 
-class TokenAuthenticator:
-    def __init__(self, users: UsersRepository, settings: Settings) -> None:
-        self._users = users
-        self._settings = settings
-
-    async def authenticate(self, authorization: str | None) -> User:
-        if authorization is None:
-            self._raise_unauthorized("Missing bearer token")
-
-        scheme, _, token = authorization.partition(" ")
-        if scheme.lower() != "bearer" or not token:
-            self._raise_unauthorized("Invalid bearer token")
-
-        try:
-            payload = jwt.decode(
-                token,
-                self._settings.jwt_secret_key,
-                algorithms=[self._settings.jwt_algorithm],
-            )
-        except jwt.PyJWTError as error:
-            raise self._unauthorized("Invalid bearer token") from error
-
-        username = payload.get("sub")
-        if not isinstance(username, str) or not username:
-            self._raise_unauthorized("Invalid bearer token")
-
-        user = await self._users.get_by_username(username)
-        if user is None:
-            self._raise_unauthorized("User not found")
-        return user
-
-    @staticmethod
-    def _unauthorized(detail: str) -> HTTPException:
-        return HTTPException(
+async def get_current_user_id(
+    credentials: HTTPAuthorizationCredentials | None = Depends(bearer_scheme),
+) -> str:
+    if credentials is None or credentials.scheme.lower() != "bearer":
+        raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail=detail,
-            headers={"WWW-Authenticate": "Bearer"},
+            detail="Invalid authentication credentials: Bearer token missing.",
         )
 
-    @classmethod
-    def _raise_unauthorized(cls, detail: str) -> None:
-        raise cls._unauthorized(detail)
+    settings = get_settings()
+    decode_kwargs = {
+        "algorithms": [settings.jwt_algorithm],
+        "options": {
+            "verify_signature": True,
+            "verify_aud": settings.jwt_audience is not None,
+            "verify_iss": settings.jwt_issuer is not None,
+            "verify_exp": True,
+        },
+    }
+    if settings.jwt_audience is not None:
+        decode_kwargs["audience"] = settings.jwt_audience
+    if settings.jwt_issuer is not None:
+        decode_kwargs["issuer"] = settings.jwt_issuer
 
+    try:
+        payload = jwt.decode(credentials.credentials, settings.jwt_secret_key, **decode_kwargs)
+    except ExpiredSignatureError as error:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Token has expired.") from error
+    except (InvalidAudienceError, InvalidIssuerError) as error:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token claims.") from error
+    except PyJWTError as error:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid authentication credentials.",
+        ) from error
 
-def create_access_token(username: str, settings: Settings) -> str:
-    return jwt.encode(
-        {"sub": username},
-        settings.jwt_secret_key,
-        algorithm=settings.jwt_algorithm,
-    )
-
-
-def requires_authentication(endpoint: Callable[..., Awaitable[Any]]) -> Callable[..., Awaitable[Any]]:
-    @wraps(endpoint)
-    async def wrapper(*args: Any, **kwargs: Any) -> Any:
-        request = _extract_request(args, kwargs)
-        session = kwargs.get("session")
-        if session is None:
-            raise RuntimeError("Authenticated endpoints must receive a session dependency.")
-
-        with request.app.container.session.override(providers.Object(session)):
-            authenticator = request.app.container.token_authenticator()
-            request.state.current_user = await authenticator.authenticate(
-                request.headers.get("Authorization")
-            )
-            return await endpoint(*args, **kwargs)
-
-    return wrapper
-
-
-def _extract_request(args: tuple[Any, ...], kwargs: dict[str, Any]) -> Request:
-    request = kwargs.get("request")
-    if isinstance(request, Request):
-        return request
-
-    for arg in args:
-        if isinstance(arg, Request):
-            return arg
-
-    raise RuntimeError("Authenticated endpoints must receive a request argument.")
+    user_id = payload.get("user_id") or payload.get("sub")
+    if not isinstance(user_id, str) or not user_id:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Token user id missing.")
+    return user_id
