@@ -94,9 +94,13 @@ class RagService:
             for value in (query_schema.business_rules, query_schema.context)
             if value.strip()
         )
+        resolved_question = await self._sql_generator.rewrite_follow_up_question(
+            question,
+            conversation_context=conversation_context,
+        )
         relevant_schema = await self._schema_context.retrieve_relevant_schema(
             full_schema,
-            question,
+            resolved_question,
             guidance=guidance,
         )
         retrieved_tables = _table_ids(relevant_schema)
@@ -115,13 +119,13 @@ class RagService:
             attempt_count = attempt + 1
             if attempt == 0:
                 generated_sql = await self._sql_generator.generate_sql(
-                    question,
+                    resolved_question,
                     schema_text,
                     conversation_context=conversation_context,
                 )
             else:
                 generated_sql = await self._sql_generator.repair_sql(
-                    question=question,
+                    question=resolved_question,
                     schema_text=schema_text,
                     failed_sql=generated_sql or "",
                     error=str(last_error),
