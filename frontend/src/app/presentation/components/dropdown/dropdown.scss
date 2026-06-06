@@ -1,0 +1,113 @@
+:host {
+  display: block;
+  width: 100%;
+}
+
+.dropdown {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+
+  &-trigger {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    width: 100%;
+    min-height: 40px;
+    padding: 10px 12px;
+    border: 0;
+    border-radius: 8px;
+    color: var(--on-surface);
+    background: transparent;
+    font-family: var(--font-family-primary);
+    font-size: 0.875rem;
+    font-weight: 600;
+    text-align: left;
+    cursor: pointer;
+
+    &:hover {
+      background-color: color-mix(in srgb, var(--surface-container-highest) 72%, transparent);
+    }
+  }
+
+  &-trigger-disabled {
+    cursor: default;
+    opacity: 0.75;
+
+    &:hover {
+      background-color: transparent;
+    }
+  }
+
+  &-trigger-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+
+    span {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+  }
+
+  &-chevron {
+    display: inline-flex;
+    transition: transform var(--transition-fast);
+  }
+
+  &-trigger-open .dropdown-chevron {
+    transform: rotate(180deg);
+  }
+
+  &-list {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding-left: 28px;
+  }
+
+  &-item {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    min-height: 34px;
+    padding: 8px 10px;
+    border: 0;
+    border-radius: 8px;
+    color: var(--on-surface-variant);
+    background: transparent;
+    font-family: var(--font-family-primary);
+    font-size: 0.8125rem;
+    text-align: left;
+    cursor: pointer;
+
+    span {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    &:hover {
+      color: var(--on-surface);
+      background-color: var(--surface-container-lowest);
+    }
+  }
+
+  &-item-selected {
+    color: var(--on-surface);
+    background-color: var(--surface-container-lowest);
+    font-weight: 600;
+  }
+
+  &-empty {
+    margin: 0;
+    padding: 8px 10px;
+    color: var(--outline);
+    font-family: var(--font-family-primary);
+    font-size: 0.8125rem;
+  }
+}

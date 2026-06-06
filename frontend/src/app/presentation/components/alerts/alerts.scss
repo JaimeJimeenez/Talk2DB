@@ -1,0 +1,137 @@
+@use 'styles' as *;
+
+:host {
+  position: fixed;
+  top: 24px;
+  right: 24px;
+  z-index: 1000;
+  pointer-events: none;
+}
+
+.alerts-region {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: min(360px, calc(100vw - 32px));
+}
+
+.alert {
+  display: grid;
+  grid-template-columns: 24px 1fr 28px;
+  gap: 12px;
+  align-items: start;
+  padding: 14px;
+  color: var(--on-surface);
+  background: var(--surface-container-lowest);
+  border: 1px solid var(--surface-container);
+  border-left: 4px solid var(--primary);
+  border-radius: 12px;
+  box-shadow: 0 16px 40px rgba(26, 28, 27, 0.12);
+  pointer-events: auto;
+  animation: alertIn 180ms ease-out;
+}
+
+.alert-success {
+  border-left-color: #16803c;
+
+  .alert-icon {
+    color: #16803c;
+  }
+}
+
+.alert-info {
+  border-left-color: var(--primary);
+
+  .alert-icon {
+    color: var(--primary);
+  }
+}
+
+.alert-warning {
+  border-left-color: var(--secondary);
+
+  .alert-icon {
+    color: var(--secondary);
+  }
+}
+
+.alert-error {
+  border-left-color: var(--error);
+
+  .alert-icon {
+    color: var(--error);
+  }
+}
+
+.alert-icon {
+  display: inline-flex;
+  font-size: 22px;
+}
+
+.alert-content {
+  min-width: 0;
+
+  strong {
+    @include typo-label-sm;
+    display: block;
+    color: var(--on-surface);
+    font-weight: 700;
+  }
+
+  p {
+    @include typo-label-sm;
+    margin: 4px 0 0;
+    color: var(--on-surface-variant);
+    letter-spacing: 0;
+  }
+}
+
+.alert-close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  color: var(--outline);
+  background: transparent;
+  border: 0;
+  border-radius: 6px;
+  cursor: pointer;
+  transition:
+    color var(--transition-fast),
+    background-color var(--transition-fast);
+
+  &:hover {
+    color: var(--on-surface);
+    background: var(--surface-container-low);
+  }
+
+  talk2db-icon {
+    font-size: 18px;
+  }
+}
+
+@keyframes alertIn {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 520px) {
+  :host {
+    top: 16px;
+    right: 16px;
+    left: 16px;
+  }
+
+  .alerts-region {
+    width: 100%;
+  }
+}

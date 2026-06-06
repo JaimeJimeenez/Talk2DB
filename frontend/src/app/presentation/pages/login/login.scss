@@ -1,0 +1,63 @@
+@use 'styles' as *;
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.forgot-password {
+  align-self: flex-end;
+  color: var(--primary);
+  font-family: var(--font-family-mono);
+  font-size: var(--font-size-label-sm);
+  font-weight: var(--font-weight-label-sm);
+  line-height: var(--line-height-label-sm);
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+.primary-action {
+  padding-top: 4px;
+}
+
+.login-footer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+
+  p {
+    @include typo-body-md;
+    margin: 0;
+    color: var(--on-surface-variant);
+  }
+
+  a {
+    color: var(--primary);
+    font-weight: 700;
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
+
+.legal-links {
+  display: flex;
+  gap: 16px;
+
+  a {
+    @include typo-label-sm;
+    color: var(--outline);
+    font-weight: var(--font-weight-label-sm);
+
+    &:hover {
+      color: var(--on-surface);
+    }
+  }
+}

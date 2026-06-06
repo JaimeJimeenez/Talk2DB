@@ -1,0 +1,14 @@
+<div class="chat-workspace" [class.has-artifact]="activeArtifact()">
+  <div class="chat-main">
+    <div class="chat-conversation">
+      <talk2db-conversation (artifactSelected)="openArtifact($event)" />
+    </div>
+    <div class="chat-prompt">
+      <talk2db-prompt/>
+    </div>
+  </div>
+
+  @if (activeArtifact()) {
+    <talk2db-artifact [artifact]="activeArtifact()!" (closed)="closeArtifact()" />
+  }
+</div>

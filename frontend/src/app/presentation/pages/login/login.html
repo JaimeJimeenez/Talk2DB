@@ -1,0 +1,25 @@
+<talk2db-auth-card title="Iniciar sesión" subtitle="Accede a tu entorno de análisis">
+  <form auth-card-form class="login-form" [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+    @for (field of fields; track field.id) {
+      <talk2db-text-field [field]="field" />
+    }
+
+    <a class="forgot-password" href="#">¿Olvidaste tu contraseña?</a>
+
+    <div class="primary-action">
+      <talk2db-button [button]="loginButton()" />
+    </div>
+  </form>
+
+  <div auth-card-footer class="login-footer">
+    <p>
+      ¿No tienes una cuenta?
+      <a routerLink="/signup">Regístrate ahora</a>
+    </p>
+    <nav class="legal-links" aria-label="Enlaces legales">
+      <a href="#">Privacidad</a>
+      <a href="#">Términos</a>
+      <a href="#">Soporte</a>
+    </nav>
+  </div>
+</talk2db-auth-card>

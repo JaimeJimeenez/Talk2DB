@@ -1,0 +1,28 @@
+@use 'styles' as *;
+
+.signup-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.primary-action {
+  padding-top: 16px;
+}
+
+p {
+  @include typo-body-md;
+  margin: 0;
+  color: var(--on-surface-variant);
+}
+
+a {
+  margin-left: 4px;
+  color: var(--primary);
+  font-weight: 700;
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}

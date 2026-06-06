@@ -1,0 +1,163 @@
+<section class="metrics-page">
+  <header class="metrics-header">
+    <div>
+      <h1>Métricas RAG</h1>
+      <p>Estado global de completions, latencia, reparaciones y errores.</p>
+    </div>
+
+    <form class="filters" (ngSubmit)="refresh()">
+      <label>
+        Desde
+        <input type="date" [ngModel]="from()" (ngModelChange)="from.set($event)" name="from" />
+      </label>
+      <label>
+        Hasta
+        <input type="date" [ngModel]="to()" (ngModelChange)="to.set($event)" name="to" />
+      </label>
+      <label>
+        Schema
+        <select [ngModel]="schemaId()" (ngModelChange)="schemaId.set($event)" name="schemaId">
+          <option value="">Todos</option>
+          @for (schema of schemaOptions(); track trackBySchema($index, schema)) {
+            <option [value]="schema.schemaId">{{ schema.schemaName || schema.schemaId }}</option>
+          }
+        </select>
+      </label>
+      <button type="submit" [disabled]="isLoading()">Actualizar</button>
+    </form>
+  </header>
+
+  @if (summary(); as data) {
+    @if (hasData()) {
+      <div class="kpi-grid">
+        <article class="kpi">
+          <span>Completions</span>
+          <strong>{{ data.totalRuns }}</strong>
+          <small>{{ data.successfulRuns }} correctas · {{ data.failedRuns }} con error</small>
+        </article>
+        <article class="kpi success">
+          <span>Success rate</span>
+          <strong>{{ formatPercent(data.successRate) }}</strong>
+          <small>Porcentaje de ejecuciones resueltas</small>
+        </article>
+        <article class="kpi">
+          <span>Latencia media</span>
+          <strong>{{ formatMs(data.averageDurationMs) }}</strong>
+          <small>Tiempo completo de RAG</small>
+        </article>
+        <article class="kpi">
+          <span>Reparaciones medias</span>
+          <strong>{{ data.averageRepairCount }}</strong>
+          <small>Intentos de corrección SQL</small>
+        </article>
+      </div>
+
+      <div class="chart-grid">
+        <section class="panel">
+          <div class="panel-title">
+            <h2>Completions por día</h2>
+            <span>success/error</span>
+          </div>
+          <div class="vertical-chart">
+            @for (point of data.runsByDay; track trackByLabel($index, point)) {
+              <div class="day-column">
+                <div class="stack" [style.height]="barHeight(point.total, maxRunCount(data.runsByDay))">
+                  <span class="ok" [style.height]="barHeight(point.successful, point.total)"></span>
+                  <span class="fail" [style.height]="barHeight(point.failed, point.total)"></span>
+                </div>
+                <small>{{ point.label.slice(5) }}</small>
+              </div>
+            }
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-title">
+            <h2>Latencia media</h2>
+            <span>por día</span>
+          </div>
+          <div class="vertical-chart latency">
+            @for (point of data.latencyByDay; track trackByLabel($index, point)) {
+              <div class="day-column">
+                <div class="bar" [style.height]="barHeight(point.averageDurationMs, maxLatency(data.latencyByDay))"></div>
+                <small>{{ formatMs(point.averageDurationMs) }}</small>
+              </div>
+            }
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-title">
+            <h2>Uso por schema</h2>
+            <span>{{ data.runsBySchema.length }} schemas</span>
+          </div>
+          <div class="horizontal-bars">
+            @for (schema of data.runsBySchema; track trackBySchema($index, schema)) {
+              <div class="bar-row">
+                <span>{{ schema.schemaName || schema.schemaId }}</span>
+                <div><i [style.width]="barWidth(schema.count, maxSchemaCount(data.runsBySchema))"></i></div>
+                <strong>{{ schema.count }}</strong>
+              </div>
+            }
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-title">
+            <h2>Filas devueltas</h2>
+            <span>distribución</span>
+          </div>
+          <div class="horizontal-bars">
+            @for (bucket of data.rowCountBuckets; track trackByLabel($index, bucket)) {
+              <div class="bar-row">
+                <span>{{ bucket.label }}</span>
+                <div><i [style.width]="barWidth(bucket.count, maxBucketCount(data.rowCountBuckets))"></i></div>
+                <strong>{{ bucket.count }}</strong>
+              </div>
+            }
+          </div>
+        </section>
+      </div>
+
+      <section class="panel failures">
+        <div class="panel-title">
+          <h2>Últimas ejecuciones fallidas</h2>
+          <span>{{ failedRuns().length }} errores</span>
+        </div>
+
+        @if (failedRuns().length) {
+          <div class="runs-table">
+            <div class="table-head">
+              <span>Fecha</span>
+              <span>Schema</span>
+              <span>Prompt</span>
+              <span>Error</span>
+              <span>SQL</span>
+            </div>
+            @for (run of failedRuns(); track run.id) {
+              <div class="table-row">
+                <span>{{ run.createdAt.toLocaleString() }}</span>
+                <span>{{ run.schemaName || run.schemaId }}</span>
+                <span>{{ run.prompt }}</span>
+                <span>{{ run.error || 'Sin detalle' }}</span>
+                <code>{{ run.generatedSql || 'Sin SQL' }}</code>
+              </div>
+            }
+          </div>
+        } @else {
+          <p class="empty-inline">No hay ejecuciones fallidas para los filtros actuales.</p>
+        }
+      </section>
+    } @else {
+      <div class="empty-state">
+        <h2>Sin métricas todavía</h2>
+        <p>Cuando se ejecute la primera completion, este panel mostrará salud, latencia y errores del RAG.</p>
+      </div>
+    }
+  } @else {
+    <div class="empty-state">
+      <h2>Cargando métricas</h2>
+      <p>Preparando el panel operativo del RAG.</p>
+    </div>
+  }
+</section>

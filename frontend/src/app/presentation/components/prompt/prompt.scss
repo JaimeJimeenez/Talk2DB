@@ -1,0 +1,85 @@
+:host {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    max-width: var(--spacing-container-chat);
+    flex-direction: column;
+    gap: 12px;
+}
+
+form {
+    display: flex;
+    width: 100%;
+    border: var(--border-card);
+    border-radius: 8px;
+    box-shadow: var(--shadow-card);
+    padding: 16px;
+    gap: 24px;
+    flex-direction: column;
+    background-color: #FFFFFF;
+}
+
+textarea {
+    border: none;
+    background: transparent;
+    font-size: 16px;
+    width: 100%;
+    flex: 1;
+    font-family: inherit;
+    overflow-y: auto;
+    resize: none;
+}
+
+textarea:focus {
+    outline: none;
+}
+
+.prompt-options {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    justify-content: flex-end;
+}
+
+.schema-select {
+    display: block;
+    min-width: 128px;
+    max-width: 220px;
+    position: relative;
+}
+
+@media (max-width: 640px) {
+    .prompt-options {
+        justify-content: space-between;
+    }
+
+    .schema-select {
+        min-width: 0;
+        flex: 1;
+    }
+}
+
+:host ::ng-deep .schema-select .dropdown {
+    position: relative;
+}
+
+:host ::ng-deep .schema-select .dropdown-trigger {
+    min-height: 40px;
+    border: var(--border-card);
+    background-color: var(--surface-container-lowest);
+    font-weight: 500;
+}
+
+:host ::ng-deep .schema-select .dropdown-list {
+    position: absolute;
+    right: 0;
+    bottom: calc(100% + 6px);
+    z-index: 10;
+    min-width: 100%;
+    padding: 6px;
+    border: var(--border-card);
+    border-radius: 8px;
+    box-shadow: var(--shadow-card);
+    background-color: #FFFFFF;
+}

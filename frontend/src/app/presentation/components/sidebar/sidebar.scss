@@ -1,0 +1,41 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  background-color: #f5f2ed;
+  height: 100%;
+  border-right: var(--border-card);
+  width: 256px;
+}
+
+.sidebar {
+
+    &-header {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 24px;
+        gap: 16px;
+        flex-direction: column;
+        width: 100%;
+    }
+
+    &-nav {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        padding: 0 16px 24px;
+        width: 100%;
+    }
+
+    &-section {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        width: 100%;
+    }
+}
+
+.new_chat {
+    display: flex;
+    width: 100%;
+}
