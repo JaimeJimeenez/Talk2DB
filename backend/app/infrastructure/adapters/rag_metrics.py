@@ -67,24 +67,23 @@ class RagMetricsAdapter(RagMetricsPort):
         with self._session_factory() as session:
             self._ensure_table(session)
             records = session.execute(self._filtered_select(filters)).scalars().all()
-
-        total_runs = len(records)
-        successful_runs = sum(1 for record in records if record.status == "success")
-        failed_runs = total_runs - successful_runs
-        return RagMetricsSummary(
-            total_runs=total_runs,
-            successful_runs=successful_runs,
-            failed_runs=failed_runs,
-            success_rate=round(successful_runs / total_runs, 4) if total_runs else 0,
-            average_duration_ms=round(_average(record.duration_ms for record in records), 2),
-            average_repair_count=round(_average(record.repair_count for record in records), 2),
-            average_row_count=round(_average(record.row_count for record in records), 2),
-            runs_by_day=_runs_by_day(records),
-            latency_by_day=_latency_by_day(records),
-            runs_by_schema=_runs_by_schema(records),
-            errors_by_type=_errors_by_type(records),
-            row_count_buckets=_row_count_buckets(records),
-        )
+            total_runs = len(records)
+            successful_runs = sum(1 for record in records if record.status == "success")
+            failed_runs = total_runs - successful_runs
+            return RagMetricsSummary(
+                total_runs=total_runs,
+                successful_runs=successful_runs,
+                failed_runs=failed_runs,
+                success_rate=round(successful_runs / total_runs, 4) if total_runs else 0,
+                average_duration_ms=round(_average(record.duration_ms for record in records), 2),
+                average_repair_count=round(_average(record.repair_count for record in records), 2),
+                average_row_count=round(_average(record.row_count for record in records), 2),
+                runs_by_day=_runs_by_day(records),
+                latency_by_day=_latency_by_day(records),
+                runs_by_schema=_runs_by_schema(records),
+                errors_by_type=_errors_by_type(records),
+                row_count_buckets=_row_count_buckets(records),
+            )
 
     async def list_runs(self, filters: RagMetricsFilters) -> list[RagRun]:
         statement = self._filtered_select(filters)

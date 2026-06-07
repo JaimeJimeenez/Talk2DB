@@ -42,8 +42,8 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
-      ollama:
-        condition: service_started
+      ollama-models:
+        condition: service_completed_successfully
       qdrant:
         condition: service_started
     ports:
@@ -59,6 +59,31 @@ services:
       - "11434:11434"
     volumes:
       - ollama_data:/root/.ollama
+    healthcheck:
+      test: ["CMD", "ollama", "list"]
+      interval: 5s
+      timeout: 3s
+      retries: 30
+    networks:
+      - talk2db-net
+
+  ollama-models:
+    image: ollama/ollama:latest
+    container_name: talk2db-ollama-models
+    depends_on:
+      ollama:
+        condition: service_healthy
+    environment:
+      OLLAMA_HOST: http://ollama:11434
+      LLM_MODEL: ${LLM_MODEL:-qwen2.5-coder:14b}
+      EMBEDDING_MODEL: ${EMBEDDING_MODEL:-nomic-embed-text}
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - |
+        set -eu
+        ollama pull "$$LLM_MODEL"
+        ollama pull "$$EMBEDDING_MODEL"
+        ollama list
     networks:
       - talk2db-net
 

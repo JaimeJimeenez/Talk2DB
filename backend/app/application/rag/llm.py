@@ -119,6 +119,40 @@ Rules:
     def __init__(self, llm: ChatModel) -> None:
         self._llm = llm
 
+    async def rewrite_follow_up_question(
+        self,
+        question: str,
+        conversation_context: str | None = None,
+    ) -> str:
+        if not conversation_context or not conversation_context.strip():
+            return question
+
+        response = await self._llm.ainvoke(
+            [
+                SystemMessage(
+                    content=(
+                        "Rewrite follow-up analytics questions into standalone questions. "
+                        "Use the previous conversation only to resolve references, pronouns, "
+                        "omitted filters, requested columns, comparisons and sort criteria. "
+                        "Prefer the immediately previous user/assistant exchange when resolving references. "
+                        "Preserve relevant filters, joins, metrics and ORDER BY intent from previous SQL. "
+                        "Return only the rewritten question, with no markdown and no explanation."
+                    )
+                ),
+                HumanMessage(
+                    content=(
+                        "Previous conversation messages, oldest first:\n\n"
+                        f"{conversation_context.strip()}\n\n"
+                        "Current user question:\n\n"
+                        f"{question}\n\n"
+                        "Standalone question:"
+                    )
+                ),
+            ]
+        )
+        rewritten = str(getattr(response, "content", response)).strip().strip('"').strip("'")
+        return rewritten or question
+
     async def generate_sql(
         self,
         question: str,

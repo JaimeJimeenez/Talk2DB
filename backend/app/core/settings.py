@@ -19,6 +19,7 @@ class Settings(BaseSettings):
     qdrant_url: str = "http://localhost:6333"
     qdrant_collection: str = "schema_context"
     schema_retrieval_top_k: int = 4
+    seed_schema_context_on_startup: bool = True
     environment: str = "development"
     jwt_secret_key: str = "dev-secret-change-me-with-32-bytes-min"
     jwt_algorithm: str = "HS256"
