@@ -56,6 +56,11 @@ class SchemaContextService:
         expanded_table_ids = self._expand_with_related_tables(schema, selected_table_ids)
         return self._filter_schema_by_table_ids(schema, expanded_table_ids)
 
+    async def ensure_schema_index(self, schema: dict[str, Any], *, guidance: str = "") -> int:
+        documents = self._build_documents(schema, guidance=guidance)
+        await self._load_or_build_index(schema, documents)
+        return len(documents)
+
     def format_for_prompt(self, schema: dict[str, Any]) -> str:
         lines: list[str] = []
         for schema_name, tables in schema.items():
