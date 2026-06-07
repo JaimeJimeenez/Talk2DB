@@ -81,12 +81,6 @@ class Database:
         except (OperationalError, PendingRollbackError):
             session.rollback()
             self._session_factory.remove()
-            try:
-                with self._engine.begin() as new_session:
-                    yield new_session
-            except Exception as e:
-                new_session.rollback()
-                raise e
             raise
         except Exception as e:
             session.rollback()

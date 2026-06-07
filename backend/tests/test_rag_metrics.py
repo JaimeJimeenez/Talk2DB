@@ -1,3 +1,5 @@
+import asyncio
+from contextlib import contextmanager
 from datetime import UTC, datetime, timedelta
 
 import jwt
@@ -12,6 +14,8 @@ from app.domain.entities.rag_metrics import (
     RagRun,
     RagSchemaMetric,
 )
+from app.domain.entities.rag_metrics import RagMetricsFilters
+from app.infrastructure.adapters.rag_metrics import RagMetricsAdapter
 from app.main import app
 
 USER_ID = "00000000-0000-0000-0000-000000000101"
@@ -134,3 +138,63 @@ def test_rag_metrics_requires_bearer_token():
     response = TestClient(app).get("/api/v1/rag/metrics/summary")
 
     assert response.status_code == 401
+
+
+def test_rag_metrics_summary_is_calculated_before_session_closes():
+    closed = False
+    created_at = datetime(2026, 6, 3, 10, 0, tzinfo=UTC)
+
+    class Record:
+        def __init__(self) -> None:
+            self.status = "success"
+            self.duration_ms = 250
+            self.repair_count = 1
+            self.row_count = 12
+            self.created_at = created_at
+            self.schema_id = "schema-1"
+            self.schema_name = "ventas"
+            self.error = None
+
+        def __getattribute__(self, name):
+            if name in {
+                "status",
+                "duration_ms",
+                "repair_count",
+                "row_count",
+                "created_at",
+                "schema_id",
+                "schema_name",
+                "error",
+            } and closed:
+                raise AssertionError("record was accessed after the session closed")
+            return object.__getattribute__(self, name)
+
+    class Result:
+        def scalars(self):
+            return self
+
+        def all(self):
+            return [Record()]
+
+    class Session:
+        def execute(self, _statement):
+            return Result()
+
+    @contextmanager
+    def session_factory():
+        nonlocal closed
+        yield Session()
+        closed = True
+
+    class Adapter(RagMetricsAdapter):
+        def _ensure_table(self, _session):
+            return None
+
+        def _filtered_select(self, _filters):
+            return object()
+
+    summary = asyncio.run(Adapter(session_factory).get_summary(RagMetricsFilters()))
+
+    assert summary.total_runs == 1
+    assert summary.successful_runs == 1
+    assert summary.average_duration_ms == 250
